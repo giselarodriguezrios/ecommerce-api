@@ -1,0 +1,9 @@
+logging:
+  level:
+    ROOT: INFO
+    com.company: ERROR
+
+file:
+  product: classpath:product.csv
+  size: classpath:size.csv
+  stock: classpath:stock.csv

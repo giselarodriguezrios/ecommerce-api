@@ -1,2 +1,4 @@
-package com.company.ecommerce.app;public class EcommerceServiceImplTest {
+package com.company.ecommerce.app;
+
+public class EcommerceServiceImplTest {
 }

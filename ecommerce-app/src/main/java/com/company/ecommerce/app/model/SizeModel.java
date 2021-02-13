@@ -5,15 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductModel {
+public class SizeModel {
     private Long id;
-    private Long sequence;
-    private List<SizeModel> listSize;
-
+    private Long productId;
+    private Boolean backSoon;
+    private Boolean special;
+    private StockModel stock;
 }
+
+

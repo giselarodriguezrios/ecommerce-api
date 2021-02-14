@@ -6,7 +6,6 @@ import com.company.ecommerce.app.model.ProductModel;
 import com.company.ecommerce.app.model.SizeModel;
 import com.company.ecommerce.app.model.StockModel;
 import com.company.ecommerce.app.utils.ConvertersUtil;
-import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -38,14 +33,20 @@ public class StockProductService {
     @Value("${file.stock}")
     private Resource resourceFileStock;
 
-    @Autowired
-    public StockProductService() {}
+    private final FileReadService fileReadService;
 
-    protected List<ProductModel> getProducts(){
+    @Autowired
+    public StockProductService(FileReadService fileReadService) {
+        this.fileReadService = fileReadService;
+    }
+    public List<ProductModel> getProductsIdOrderBySequence(){
+        return getProducts(getSize(getStock()));
+    }
+
+    public List<ProductModel> getProducts(List<SizeModel> listSize){
         List<ProductModel> listProducts = null;
         try {
-            List<SizeModel> listSize = getSize();
-            listProducts = readFile(resourceFileProduct.getFile()).stream()
+            listProducts = fileReadService.readFile(resourceFileProduct).stream()
                     .map(product->{
                         Long productId = ConvertersUtil.converterStringToLong(product.get(0));
                         Long sequence = ConvertersUtil.converterStringToLong(product.get(1));
@@ -82,11 +83,10 @@ public class StockProductService {
                 (sizeModels.stream().anyMatch(size->size.getSpecial()) && sizeModels.stream().anyMatch(size->!size.getSpecial()));
     }
 
-    private List<SizeModel> getSize(){
+    public List<SizeModel> getSize(List<StockModel> listStock){
         List<SizeModel> listSize = null;
         try {
-            List<StockModel> listStock = getStock();
-            listSize = readFile(resourceFileSize.getFile()).stream()
+            listSize = fileReadService.readFile(resourceFileSize).stream()
                     .map(size-> {
                         Long sizeId = ConvertersUtil.converterStringToLong(size.get(0));
                         Long productId = ConvertersUtil.converterStringToLong(size.get(1));
@@ -130,10 +130,10 @@ public class StockProductService {
         return CollectionUtils.isEmpty(stockModels)? null: stockModels.get(0);
     }
 
-    private List<StockModel> getStock(){
+    public List<StockModel> getStock(){
         List<StockModel> listStock = null;
         try {
-            listStock = readFile(resourceFileStock.getFile()).stream()
+            listStock = fileReadService.readFile(resourceFileStock).stream()
                     .map(stock->{
                         Long sizeId = ConvertersUtil.converterStringToLong(stock.get(0));
                         Integer quantity = ConvertersUtil.converterStringToInteger(stock.get(1));
@@ -155,16 +155,6 @@ public class StockProductService {
             throw new ServiceException(ExceptionServiceType.STOCK);
         }
         return listStock;
-    }
-
-    private List<List<String>> readFile(File file) throws IOException, CsvValidationException {
-        List<List<String>> records = new ArrayList<>();
-        CSVReader csvReader = new CSVReader(new FileReader(file));
-        String[] values = null;
-        while ((values = csvReader.readNext()) != null) {
-            records.add(Arrays.asList(values));
-        }
-        return records;
     }
 
 }

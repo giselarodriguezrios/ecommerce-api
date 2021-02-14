@@ -32,37 +32,8 @@ public class EcommerceControllerTest {
         Assert.assertEquals(mockProductsIdOrderBySequence(), response);
     }
 
-    @Test
-    public void itShouldReturnOfEcommerceServiceThrowServiceException() {
-
-    }
-
     private String mockProductsIdOrderBySequence() {
         return "5,1,3";
-    }
-
-    private ServiceException mockServiceExceptionByFileReadStock(){
-        return new ServiceException(ExceptionServiceType.STOCK_FILE_READ);
-    }
-
-    private ServiceException mockServiceExceptionByFileReadSize(){
-        return new ServiceException(ExceptionServiceType.SIZE_FILE_READ);
-    }
-
-    private ServiceException mockServiceExceptionByFileReadProduct(){
-        return new ServiceException(ExceptionServiceType.PRODUCT_FILE_READ);
-    }
-
-    private ServiceException mockServiceExceptionByStock(){
-        return new ServiceException(ExceptionServiceType.STOCK);
-    }
-
-    private ServiceException mockServiceExceptionBySize(){
-        return new ServiceException(ExceptionServiceType.SIZE);
-    }
-
-    private ServiceException mockServiceExceptionByProduct(){
-        return new ServiceException(ExceptionServiceType.PRODUCT);
     }
 
 }
